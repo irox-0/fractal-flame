@@ -45,8 +45,6 @@ Build:
 
 Run Black Box Tests:
   stage: blackbox-tests
-  extends:
-    - .docker
   needs:
     - job: Build
       artifacts: true
