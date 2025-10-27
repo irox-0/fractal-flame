@@ -10,7 +10,7 @@ measure_time() {
 
     # Измерение времени выполнения
     START_TIME=$(date +%s)
-    java -jar "$JAR_PATH" -w 1920 -h 1080 -t "$threads" -o "$output_file"
+    java -jar "$JAR_PATH" -Dlog4j.configurationFile=log4j2.xml -w 1920 -h 1080 -t "$threads" -o "$output_file"
     EXIT_CODE=$?
     END_TIME=$(date +%s)
 
