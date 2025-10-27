@@ -4,7 +4,7 @@ echo "Testing basic functionality..."
 
 # Аргументы для запуска программы
 JAR_PATH="$1"
-ARGS="-Dlog4j.configurationFile=log4j2.xml -w 800 -h 600 -o test_output.png"
+ARGS="-c=log4j2.xml -w 800 -h 600 -o test_output.png"
 
 # Запуск Java-программы
 echo "Running: java -jar $JAR_PATH $ARGS"
