@@ -31,8 +31,7 @@ measure_time() {
 echo "threads,duration_seconds" > performance_results.csv
 
 # Тестирование с разным количеством потоков
-THREAD_COUNTS=(1 2 4)
-for threads in "${THREAD_COUNTS[@]}"; do
+for threads in 1 2 4; do
     if ! measure_time "$threads"; then
         echo "Performance test failed for $threads threads"
         exit 1

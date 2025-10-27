@@ -1,28 +1,11 @@
-image: maven:3.9.11-eclipse-temurin-24-noble
-
 .mvn.cache:
   cache:
     key: ${CI_COMMIT_REF_SLUG}
     paths:
       - .m2/repository
 
-.docker:
-  variables:
-    DOCKER_HOST: tcp://docker:2376
-    DOCKER_TLS_VERIFY: 1
-    DOCKER_CERT_PATH: "/certs/client"
-  image: docker
-  tags:
-    - dind
-  services:
-    - name: docker:dind
-      alias: docker
-  before_script:
-    - echo "$CI_JOB_TOKEN" | docker login gitlab.education.tbank.ru:443 -u gitlab-ci-token --password-stdin
-
 variables:
   MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
-  GITLAB_DOCKER_PROXY: gitlab.education.tbank.ru:443/backend-academy-java-2025/lecture-materials/dependency_proxy/containers
 
 workflow:
   rules:
@@ -60,12 +43,8 @@ Build:
 
 Run Black Box Tests:
   stage: blackbox-tests
-  extends:
-    - .docker
   needs:
     - job: Build
       artifacts: true
   script:
-    - docker build --build-arg RUNTIME_IMAGE=$GITLAB_DOCKER_PROXY/eclipse-temurin:24-jre -t app .
     - ./tests/run.sh tests/cases target/project-1.0.jar
-
