@@ -21,7 +21,8 @@ public class Application implements Runnable {
 
     @Option(
             names = {"-s", "--font-size"},
-            description = "Font size")
+            description = "Font size",
+            defaultValue = "12")
     int fontSize;
 
     @Parameters(
