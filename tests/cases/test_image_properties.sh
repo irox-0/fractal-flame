@@ -24,15 +24,18 @@ if [ ! -f "test_output.png" ]; then
 fi
 
 # Проверка расширения файла
-if [[ ! "test_output.png" =~ \.png$ ]]; then
-    echo "✗ Image file does not have .png extension"
-    exit 1
-else
-    echo "✓ Image file has .png extension"
-fi
+case "test_output.png" in
+    *.png)
+        echo "✓ Image file has .png extension"
+        ;;
+    *)
+        echo "✗ Image file does not have .png extension"
+        exit 1
+        ;;
+esac
 
 # Проверка, имеет ли файл содержимое (ненулевой размер)
-FILE_SIZE=$(stat -f%z "test_output.png" 2>/dev/null || stat -c%s "test_output.png" 2>/dev/null)
+FILE_SIZE=$(stat -c%s "test_output.png" 2>/dev/null || stat -f%z "test_output.png" 2>/dev/null)
 if [ "$FILE_SIZE" -gt 0 ]; then
     echo "✓ Image file has content (size: $FILE_SIZE bytes)"
 else
@@ -41,7 +44,7 @@ else
 fi
 
 # Проверка сигнатуры PNG (первые 8 байт должны быть 89 50 4E 47 0D 0A 1A 0A)
-PNG_SIGNATURE=$(xxd -p -l 8 "test_output.png" 2>/dev/null)
+PNG_SIGNATURE=$(dd if="test_output.png" bs=8 count=1 2>/dev/null | xxd -p)
 if [ "$PNG_SIGNATURE" = "89504e470d0a1a0a" ]; then
     echo "✓ Image file has valid PNG signature"
 else

@@ -9,15 +9,15 @@ NC='\033[0m' # No Color
 
 # Проверяем, передана ли директория в качестве аргумента
 if [ -z "$1" ]; then
-    echo -e "${RED}Ошибка: Не указана директория.${NC}"
-    echo -e "${YELLOW}Использование: $0 <путь_к_директории> <путь_к_jar_файлу>${NC}"
+    echo "${RED}Ошибка: Не указана директория.${NC}"
+    echo "${YELLOW}Использование: $0 <путь_к_директории> <путь_к_jar_файлу>${NC}"
     exit 1
 fi
 
 # Проверяем, передан ли путь к .jar файлу
 if [ -z "$2" ]; then
-    echo -e "${RED}Ошибка: Не указан путь к .jar файлу.${NC}"
-    echo -e "${YELLOW}Использование: $0 <путь_к_директории> <путь_к_jar_файлу>${NC}"
+    echo "${RED}Ошибка: Не указан путь к .jar файлу.${NC}"
+    echo "${YELLOW}Использование: $0 <путь_к_директории> <путь_к_jar_файлу>${NC}"
     exit 1
 fi
 
@@ -29,34 +29,61 @@ JAR_PATH="$2"
 
 # Проверяем, существует ли указанная директория
 if [ ! -d "$TARGET_DIR" ]; then
-    echo -e "${RED}Ошибка: Директория $TARGET_DIR не существует.${NC}"
+    echo "${RED}Ошибка: Директория $TARGET_DIR не существует.${NC}"
     exit 1
 fi
 
 # Проверяем, существует ли .jar файл
 if [ ! -f "$JAR_PATH" ]; then
-    echo -e "${RED}Ошибка: .jar файл $JAR_PATH не найден.${NC}"
+    echo "${RED}Ошибка: .jar файл $JAR_PATH не найден.${NC}"
     exit 1
 fi
 
+# Переменные для подсчета тестов
+total_tests=0
+successful_tests=0
+
 # Перебираем все .sh файлы в указанной директории
-echo -e "${BLUE}Ищем все .sh файлы в директории: $TARGET_DIR${NC}"
+echo "${BLUE}Ищем все .sh файлы в директории: $TARGET_DIR${NC}"
 
 for script in "$TARGET_DIR"/*.sh; do
     # Проверяем, существует ли файл
-    if [[ -f "$script" ]]; then
-        echo -e "${YELLOW}Запускаем: $script${NC}"
+    if [ -f "$script" ]; then
+        total_tests=$((total_tests + 1))
+        echo "${YELLOW}Запускаем: $script${NC}"
         # Делаем файл исполняемым (на случай, если он не имеет прав на выполнение)
         chmod +x "$script"
         # Запускаем файл
-        ./"$script" "$JAR_PATH"
+        sh "$script" "$JAR_PATH"
         # Проверяем код возврата
-        if [[ $? -ne 0 ]]; then
-            echo -e "${RED}Ошибка при выполнении $script${NC}"
+        if [ $? -ne 0 ]; then
+            echo "${RED}Ошибка при выполнении $script${NC}"
         else
-            echo -e "${GREEN}$script выполнен успешно${NC}"
+            echo "${GREEN}$script выполнен успешно${NC}"
+            successful_tests=$((successful_tests + 1))
         fi
     else
-        echo -e "${RED}Файл $script не найден или не является исполняемым${NC}"
+        echo "${RED}Файл $script не найден или не является исполняемым${NC}"
     fi
 done
+
+# Вывод результатов
+echo ""
+echo "${BLUE}Результаты тестирования:${NC}"
+echo "Всего тестов: $total_tests"
+echo "Успешных тестов: $successful_tests"
+
+# Проверяем, было ли выполнено ровно 3 теста
+if [ "$total_tests" -ne 3 ]; then
+    echo "${RED}Ошибка: Ожидалось 3 теста, но выполнено $total_tests.${NC}"
+    exit 1
+fi
+
+# Если все тесты успешны
+if [ "$total_tests" -eq "$successful_tests" ]; then
+    echo "${GREEN}Все тесты успешно пройдены!${NC}"
+    exit 0
+else
+    echo "${RED}Некоторые тесты завершились с ошибками.${NC}"
+    exit 1
+fi
