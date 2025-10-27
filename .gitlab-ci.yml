@@ -67,5 +67,5 @@ Run Black Box Tests:
       artifacts: true
   script:
     - docker build --build-arg RUNTIME_IMAGE=$GITLAB_DOCKER_PROXY/eclipse-temurin:24-jre -t app .
-    - ./tests/run.sh tests/cases target/project-1.0.jar
+    - bash tests/run.sh tests/cases target/project-1.0.jar
 
