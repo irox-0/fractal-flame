@@ -19,6 +19,9 @@ dependency-reduced-pom.xml
 ### Scala SBT
 .bsp
 
+### json config file
+*.json
+
 ### log files ###
 *.log
 hs_err_pid*

@@ -293,6 +293,11 @@
             <scope>runtime</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.38</version>
+        </dependency>
         <!-- Test libraries -->
         <dependency>
             <groupId>org.awaitility</groupId>
@@ -403,6 +408,11 @@
                                 <groupId>info.picocli</groupId>
                                 <artifactId>picocli-codegen</artifactId>
                                 <version>${picocli-codegen.version}</version>
+                            </path>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>1.18.38</version>
                             </path>
                         </annotationProcessorPaths>
                     </configuration>
@@ -633,6 +643,14 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>25</source>
+                    <target>25</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>
