@@ -1,17 +1,21 @@
 package academy;
 
+import academy.application.algorithm.ChaosGame;
+import academy.application.render.ImageRenderer;
 import academy.cli.converter.AffineParamsConverter;
 import academy.cli.converter.AppConfigurationConverter;
 import academy.cli.converter.PathConverter;
 import academy.cli.converter.VariationParamsConverter;
 import academy.domain.AffineParams;
 import academy.domain.AppConfiguration;
+import academy.domain.Size;
 import academy.domain.VariationParams;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Random;
 
 @Command(name = "Application Example", version = "Example 1.0", mixinStandardHelpOptions = true)
 public class Application implements Runnable {
@@ -42,7 +46,7 @@ public class Application implements Runnable {
     private int iterationCount;
 
     @Option(
-            names = {"-o", "--otput-path"},
+            names = {"-o", "--output-path"},
             description = "Path to image file",
             defaultValue = "result.png",
             converter = PathConverter.class
@@ -86,6 +90,25 @@ public class Application implements Runnable {
 
     @Override
     public void run() {
+        if (appConfiguration == null) {
+            Size size = new Size(width, height);
+            appConfiguration = AppConfiguration.builder()
+                .size(size)
+                .seed(seed)
+                .iterationCount(iterationCount)
+                .outputPath(outputPath)
+                .threadQuantity(threadQuantity)
+                .affineParamsList(affineParamsList)
+                .variationsParamsList(variationParamsList)
+                .build();
+        }
+
+        Random random = new Random(seed);
+        appConfiguration.setRandom(random);
+        appConfiguration.setColors();
+        ImageRenderer renderer = new ImageRenderer(appConfiguration);
+        ChaosGame game = new ChaosGame(appConfiguration, renderer);
+        game.runSingleThread();
 
     }
 }

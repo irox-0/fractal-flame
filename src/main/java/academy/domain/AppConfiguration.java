@@ -1,17 +1,36 @@
 package academy.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Random;
 
-public record AppConfiguration(
-    Size size,
-    double seed,
-    @JsonProperty("iteration_count") int iterationCount,
-    @JsonProperty("output_path") Path outputPath,
-    @JsonProperty("threads") int threadQuantity,
-    @JsonProperty("affine_params") List<AffineParams> affineParamsList,
-    @JsonProperty("functions") List<VariationParams> variationsParamsList
+@Data
+@Builder
+//@RequiredArgsConstructor
+public class AppConfiguration {
+    private final Size size;
+    private final long seed;
+    @JsonProperty("iteration_count")
+    private final int iterationCount;
+    @JsonProperty("output_path")
+    private final Path outputPath;
+    @JsonProperty("threads")
+    private final int threadQuantity;
+    @JsonProperty("affine_params")
+    private final List<AffineParams> affineParamsList;
+    @JsonProperty("functions")
+    private final List<VariationParams> variationsParamsList;
+    @JsonIgnore
+    private Random random;
 
-) { record Size(int width, int height) {}
+    public void setColors() {
+        for (AffineParams params : affineParamsList) {
+            params.setColor(random.nextDouble(0.0, 1.0));
+        }
+    }
 }
