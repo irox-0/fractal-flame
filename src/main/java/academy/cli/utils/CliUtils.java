@@ -10,18 +10,22 @@ public class CliUtils {
 
     public static void validateTransformString(String transformString, int expectedQuantity) {
         String[] parts = transformString.split(",");
-
         if (parts.length != expectedQuantity) {
-            log.error("Incorrect affine params quantity. Expected {}, received {}: '{}'", expectedQuantity, parts.length, transformString);
+            log.error("Incorrect parameter quantity. Expected {}, received {}: '{}'",
+                expectedQuantity, parts.length, transformString);
             throw new CommandLine.TypeConversionException(
-                String.format("Incorrect affine params quantity. Expected %d, received %d: '%s'",
+                String.format("Incorrect parameter quantity. Expected %d, received %d: '%s'",
                     expectedQuantity, parts.length, transformString)
             );
         }
+        log.trace("Validated transform string: '{}' ({} parameters)", transformString, parts.length);
     }
 
     public static boolean isNullOrEmpty(String value) {
-        return value == null || value.trim().isEmpty();
+        boolean result = value == null || value.trim().isEmpty();
+        if (result) {
+            log.trace("Value is null or empty");
+        }
+        return result;
     }
-
 }

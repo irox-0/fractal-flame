@@ -11,16 +11,21 @@ public class PathConverter implements CommandLine.ITypeConverter<Path> {
 
     @Override
     public Path convert(String value) throws CommandLine.TypeConversionException {
+        log.debug("Converting path from string: '{}'", value);
         if (isNullOrEmpty(value)) {
             log.error("Path value is null or empty");
             throw new CommandLine.TypeConversionException("Path value can't be null or empty");
         }
         try {
             Path path = Path.of(value);
-            log.debug("Successfully converted path: {}", value);
+            log.debug("Successfully converted path: {} -> {}", value, path.toAbsolutePath());
+            if (value.contains("..")) {
+                log.warn("Path contains relative parent references: {}", value);
+            }
             return path;
+
         } catch (InvalidPathException e) {
-            log.error("Invalid path format: {}. Error: {}", value, e.getMessage());
+            log.error("Invalid path format: '{}'. Error: {}", value, e.getMessage());
             throw new CommandLine.TypeConversionException("Invalid path format: " + value);
         }
     }

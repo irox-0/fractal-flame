@@ -15,17 +15,34 @@ public class AffineParamsConverter implements CommandLine.ITypeConverter<List<Af
 
     @Override
     public List<AffineParams> convert(String value) throws CommandLine.TypeConversionException {
+        log.debug("Converting affine params from string: '{}'", value);
+
         if (isNullOrEmpty(value)) {
             log.error("Affine params are null or empty");
             throw new CommandLine.TypeConversionException("Affine params can't be null or empty");
         }
 
-        return Stream.of(value.trim().split("/"))
-            .map(String::trim)
-            .filter(transformString -> !transformString.isEmpty())
-            .peek(transformString -> validateTransformString(transformString, EXPECTED_QUANTITY))
-            .map(AffineParams::fromString)
-            .toList();
-    }
+        try {
+            List<AffineParams> result = Stream.of(value.trim().split("/"))
+                .map(String::trim)
+                .filter(transformString -> !transformString.isEmpty())
+                .peek(transformString -> validateTransformString(transformString, EXPECTED_QUANTITY))
+                .map(AffineParams::fromString)
+                .toList();
 
+            log.info("Successfully parsed {} affine transformation(s)", result.size());
+            log.debug("Affine params: {}", result);
+
+            return result;
+
+        } catch (NumberFormatException e) {
+            log.error("Invalid number format in affine params: {}", e.getMessage());
+            throw new CommandLine.TypeConversionException(
+                "Invalid number format in affine params: " + e.getMessage());
+        } catch (Exception e) {
+            log.error("Failed to parse affine params: {}", e.getMessage());
+            throw new CommandLine.TypeConversionException(
+                "Failed to parse affine params: " + e.getMessage());
+        }
+    }
 }
