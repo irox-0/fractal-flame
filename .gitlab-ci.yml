@@ -19,6 +19,10 @@ stages:
   - build
   - blackbox-tests
 
+before_script:
+  - apt-get update -y
+  - apt-get install -y xxd
+
 Run Linter:
   stage: validate
   script:
