@@ -4,7 +4,7 @@ echo "Testing image properties..."
 
 # Аргументы для запуска программы
 JAR_PATH="$1"
-ARGS="-Dlog4j2.level=OFF -w 800 -h 600 -o test_output.png"
+ARGS="-w 800 -h 600 -o test_output.png"
 
 # Генерация тестового изображения, если оно не существует
 if [ ! -f "test_output.png" ]; then
