@@ -2,49 +2,50 @@ package academy.application.render;
 
 import academy.domain.AppConfiguration;
 import academy.domain.Point;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 
 @Slf4j
+@Getter
 public class ImageRenderer {
+    public static final int BRIGHTNESS = 255;
+    public static final double AMPLITUDE = 0.5;
+    private static final double X_MIN = -2.0;
+    private static final double X_MAX = 2.0;
+    private static final double Y_MIN = -2.0;
+    private static final double Y_MAX = 2.0;
     private final int width;
     private final int height;
     private final double[][][] histogram;
-    private final double xMin;
-    private final double xMax;
-    private final double yMin;
-    private final double yMax;
     private final int[][] palette;
 
     public ImageRenderer(AppConfiguration configuration) {
         this.width = configuration.getSize().width();
         this.height = configuration.getSize().height();
         this.histogram = new double[width][height][4];
-        this.xMin = -2.0;
-        this.xMax = 2.0;
-        this.yMin = -2.0;
-        this.yMax = 2.0;
         this.palette = generatePalette();
     }
 
     public void plot(Point point) {
-        int px = (int) Math.floor((point.getX() - xMin) / (xMax - xMin) * width);
-        int py = (int) Math.floor((point.getY() - yMin) / (yMax - yMin) * height);
+        int px = (int) Math.floor((point.getX() - X_MIN) / (X_MAX - X_MIN) * width);
+        int py = (int) Math.floor((point.getY() - Y_MIN) / (Y_MAX - Y_MIN) * height);
 
         if (px < 0 || px >= width || py < 0 || py >= height) {
             return;
         }
 
-        int colorIndex = (int) Math.floor(point.getColor() * 255);
-        colorIndex = Math.max(0, Math.min(255, colorIndex));
+        int colorIndex = (int) Math.floor(point.getColor() * BRIGHTNESS);
+        colorIndex = Math.max(0, Math.min(BRIGHTNESS, colorIndex));
         int[] color = palette[colorIndex];
 
-        histogram[px][py][0] += color[0] / 255.0;
-        histogram[px][py][1] += color[1] / 255.0;
-        histogram[px][py][2] += color[2] / 255.0;
+        histogram[px][py][0] += color[0] / (double) BRIGHTNESS;
+        histogram[px][py][1] += color[1] / (double) BRIGHTNESS;
+        histogram[px][py][2] += color[2] / (double) BRIGHTNESS;
         histogram[px][py][3] += 1.0;
     }
 
@@ -82,7 +83,6 @@ public class ImageRenderer {
         }
 
         double logScale = Math.log(alpha) / alpha;
-
         double r = histogram[x][y][0] * logScale;
         double g = histogram[x][y][1] * logScale;
         double b = histogram[x][y][2] * logScale;
@@ -97,10 +97,9 @@ public class ImageRenderer {
         g = Math.min(1.0, Math.max(0.0, g));
         b = Math.min(1.0, Math.max(0.0, b));
 
-
-        int r8 = (int) (r * 255);
-        int g8 = (int) (g * 255);
-        int b8 = (int) (b * 255);
+        int r8 = (int) (r * BRIGHTNESS);
+        int g8 = (int) (g * BRIGHTNESS);
+        int b8 = (int) (b * BRIGHTNESS);
 
         return (r8 << 16) | (g8 << 8) | b8;
     }
@@ -121,13 +120,25 @@ public class ImageRenderer {
     private int[][] generatePalette() {
         int[][] pal = new int[256][3];
 
-        for (int i = 0; i < 256; i++) {
-            double t = i / 255.0;
-            pal[i][0] = (int) (255 * (0.5 + 0.5 * Math.sin(2 * Math.PI * t + 0)));
-            pal[i][1] = (int) (255 * (0.5 + 0.5 * Math.sin(2 * Math.PI * t + 2 * Math.PI / 3)));
-            pal[i][2] = (int) (255 * (0.5 + 0.5 * Math.sin(2 * Math.PI * t + 4 * Math.PI / 3)));
+        for (int i = 0; i <= BRIGHTNESS; i++) {
+            double t = i / (double) BRIGHTNESS;
+            pal[i][0] = (int) (BRIGHTNESS * (AMPLITUDE + AMPLITUDE * Math.sin(2 * Math.PI * t + 0)));
+            pal[i][1] = (int) (BRIGHTNESS * (AMPLITUDE + AMPLITUDE * Math.sin(2 * Math.PI * t + 2 * Math.PI / 3)));
+            pal[i][2] = (int) (BRIGHTNESS * (AMPLITUDE + AMPLITUDE * Math.sin(2 * Math.PI * t + 4 * Math.PI / 3)));
         }
 
         return pal;
+    }
+
+    public void merge(List<ImageRenderer> others) {
+        for (var other : others) {
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    for (int k = 0; k < 4; k++) {
+                        this.histogram[i][j][k] += other.getHistogram()[i][j][k];
+                    }
+                }
+            }
+        }
     }
 }

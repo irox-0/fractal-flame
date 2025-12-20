@@ -108,7 +108,13 @@ public class Application implements Runnable {
         appConfiguration.setColors();
         ImageRenderer renderer = new ImageRenderer(appConfiguration);
         ChaosGame game = new ChaosGame(appConfiguration, renderer);
-        game.runSingleThread();
+        System.out.println(appConfiguration.getThreadQuantity());
+        if (appConfiguration.getThreadQuantity() == 1) {
+            game.runSingleThread();
+        } else {
+            game.runMultiThread();
+        }
+        renderer.save(appConfiguration.getOutputPath());
 
     }
 }
