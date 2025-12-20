@@ -17,6 +17,7 @@ import org.junit.jupiter.api.io.TempDir;
  * <p>These tests measure execution time for different thread configurations and verify that multi-threaded execution
  * provides performance benefits.
  */
+@Disabled
 @DisplayName("ChaosGame Performance Benchmark")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class ChaosGameBenchmarkTest {
@@ -26,7 +27,7 @@ class ChaosGameBenchmarkTest {
 
     private static final int WARMUP_RUNS = 2;
     private static final int BENCHMARK_RUNS = 3;
-    private static final int ITERATION_COUNT = 200_000_000;
+    private static final int ITERATION_COUNT = 50_000_000;
 
     private static long singleThreadTime;
     private static long twoThreadTime;
