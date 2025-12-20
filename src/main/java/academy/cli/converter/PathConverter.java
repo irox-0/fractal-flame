@@ -1,10 +1,11 @@
 package academy.cli.converter;
 
+import static academy.cli.utils.CliUtils.*;
+
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import lombok.extern.slf4j.Slf4j;
 import picocli.CommandLine;
-import static academy.cli.utils.CliUtils.*;
 
 @Slf4j
 public class PathConverter implements CommandLine.ITypeConverter<Path> {

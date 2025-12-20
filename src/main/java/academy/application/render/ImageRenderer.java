@@ -2,14 +2,14 @@ package academy.application.render;
 
 import academy.domain.AppConfiguration;
 import academy.domain.Point;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import javax.imageio.ImageIO;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Getter
@@ -100,13 +100,15 @@ public class ImageRenderer {
             }
         }
 
-        double coveragePercent = (nonEmptyPixels * 100.0) / (width * height);
-        log.info("Image statistics: {} non-empty pixels ({}% coverage)",
-            nonEmptyPixels, String.format("%.2f", coveragePercent));
+        double coveragePercent = nonEmptyPixels * 100.0 / (width * height);
+        log.info(
+                "Image statistics: {} non-empty pixels ({}% coverage)",
+                nonEmptyPixels, String.format("%.2f", coveragePercent));
 
         if (coveragePercent < 1.0) {
-            log.warn("Very low pixel coverage ({}%). Consider adjusting parameters.",
-                String.format("%.2f", coveragePercent));
+            log.warn(
+                    "Very low pixel coverage ({}%). Consider adjusting parameters.",
+                    String.format("%.2f", coveragePercent));
         }
 
         try {
@@ -118,7 +120,7 @@ public class ImageRenderer {
             log.info("Rendering completed in {} ms", endTime - startTime);
             log.debug("Total points plotted: {}, out of bounds: {}", plotCount, outOfBoundsCount);
         } catch (IOException e) {
-            log.error("Failed to save image to {}: {}", outputPath, e.getMessage(), e);
+            log.error("Failed to save image to {}: {}", outputPath, e.getMessage());
             throw new RuntimeException("Failed to save image: " + e.getMessage(), e);
         }
     }
@@ -199,7 +201,11 @@ public class ImageRenderer {
         }
 
         long endTime = System.currentTimeMillis();
-        log.debug("Merge completed in {} ms. Merged {} non-empty pixels from {} renderers. Total plot count: {}",
-            endTime - startTime, mergedPixelCount, others.size(), this.plotCount);
+        log.debug(
+                "Merge completed in {} ms. Merged {} non-empty pixels from {} renderers. Total plot count: {}",
+                endTime - startTime,
+                mergedPixelCount,
+                others.size(),
+                this.plotCount);
     }
 }

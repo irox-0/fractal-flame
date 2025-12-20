@@ -4,20 +4,12 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import picocli.CommandLine;
 
-public record VariationParams(
-    @JsonProperty("name")
-    Variation variation,
-    Double weight
-    ) {
+public record VariationParams(@JsonProperty("name") Variation variation, Double weight) {
 
     @JsonCreator
-    public VariationParams(
-        @JsonProperty("name") String name,
-        @JsonProperty("weight") Double weight
-    ) {
+    public VariationParams(@JsonProperty("name") String name, @JsonProperty("weight") Double weight) {
         this(Variation.valueOf(name.toUpperCase()), weight);
     }
-
 
     public static VariationParams fromString(String value) {
         String[] values = value.split(":");
@@ -33,9 +25,6 @@ public record VariationParams(
 
     @Override
     public String toString() {
-        return "VariationParams{" +
-            "variation=" + variation +
-            ", weight=" + weight +
-            '}';
+        return "VariationParams{" + "variation=" + variation + ", weight=" + weight + '}';
     }
 }

@@ -1,12 +1,12 @@
 package academy.cli.converter;
 
+import static academy.cli.utils.CliUtils.*;
+
 import academy.domain.AffineParams;
-import lombok.extern.slf4j.Slf4j;
-import picocli.CommandLine;
 import java.util.List;
 import java.util.stream.Stream;
-
-import static academy.cli.utils.CliUtils.*;
+import lombok.extern.slf4j.Slf4j;
+import picocli.CommandLine;
 
 @Slf4j
 public class AffineParamsConverter implements CommandLine.ITypeConverter<List<AffineParams>> {
@@ -24,11 +24,11 @@ public class AffineParamsConverter implements CommandLine.ITypeConverter<List<Af
 
         try {
             List<AffineParams> result = Stream.of(value.trim().split("/"))
-                .map(String::trim)
-                .filter(transformString -> !transformString.isEmpty())
-                .peek(transformString -> validateTransformString(transformString, EXPECTED_QUANTITY))
-                .map(AffineParams::fromString)
-                .toList();
+                    .map(String::trim)
+                    .filter(transformString -> !transformString.isEmpty())
+                    .peek(transformString -> validateTransformString(transformString, EXPECTED_QUANTITY))
+                    .map(AffineParams::fromString)
+                    .toList();
 
             log.info("Successfully parsed {} affine transformation(s)", result.size());
             log.debug("Affine params: {}", result);
@@ -37,12 +37,10 @@ public class AffineParamsConverter implements CommandLine.ITypeConverter<List<Af
 
         } catch (NumberFormatException e) {
             log.error("Invalid number format in affine params: {}", e.getMessage());
-            throw new CommandLine.TypeConversionException(
-                "Invalid number format in affine params: " + e.getMessage());
+            throw new CommandLine.TypeConversionException("Invalid number format in affine params: " + e.getMessage());
         } catch (Exception e) {
             log.error("Failed to parse affine params: {}", e.getMessage());
-            throw new CommandLine.TypeConversionException(
-                "Failed to parse affine params: " + e.getMessage());
+            throw new CommandLine.TypeConversionException("Failed to parse affine params: " + e.getMessage());
         }
     }
 }

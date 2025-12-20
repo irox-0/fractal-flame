@@ -11,79 +11,73 @@ import academy.domain.AffineParams;
 import academy.domain.AppConfiguration;
 import academy.domain.Size;
 import academy.domain.VariationParams;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Random;
 import lombok.extern.slf4j.Slf4j;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Random;
 
 @Slf4j
 @Command(name = "Fractal Flame Generator", version = "1.0", mixinStandardHelpOptions = true)
 public class Application implements Runnable {
 
     @Option(
-        names = {"-w", "--width"},
-        description = "Image width (default: ${DEFAULT-VALUE})",
-        defaultValue = "1920")
+            names = {"-w", "--width"},
+            description = "Image width (default: ${DEFAULT-VALUE})",
+            defaultValue = "1920")
     private int width;
 
     @Option(
-        names = {"-h", "--height"},
-        description = "Image height (default: ${DEFAULT-VALUE})",
-        defaultValue = "1080")
+            names = {"-h", "--height"},
+            description = "Image height (default: ${DEFAULT-VALUE})",
+            defaultValue = "1080")
     private int height;
 
     @Option(
-        names = {"--seed"},
-        description = "Random seed (default: ${DEFAULT-VALUE})",
-        defaultValue = "5")
+            names = {"--seed"},
+            description = "Random seed (default: ${DEFAULT-VALUE})",
+            defaultValue = "5")
     private long seed;
 
     @Option(
-        names = {"-i", "--iteration-count"},
-        description = "Count of generation iterations (default: ${DEFAULT-VALUE})",
-        defaultValue = "2500"
-    )
+            names = {"-i", "--iteration-count"},
+            description = "Count of generation iterations (default: ${DEFAULT-VALUE})",
+            defaultValue = "2500")
     private int iterationCount;
 
     @Option(
-        names = {"-o", "--output-path"},
-        description = "Path to output image file (default: ${DEFAULT-VALUE})",
-        defaultValue = "result.png",
-        converter = PathConverter.class
-    )
+            names = {"-o", "--output-path"},
+            description = "Path to output image file (default: ${DEFAULT-VALUE})",
+            defaultValue = "result.png",
+            converter = PathConverter.class)
     private Path outputPath;
 
     @Option(
-        names = {"-t", "--threads"},
-        description = "Thread quantity (default: ${DEFAULT-VALUE})",
-        defaultValue = "1"
-    )
+            names = {"-t", "--threads"},
+            description = "Thread quantity (default: ${DEFAULT-VALUE})",
+            defaultValue = "1")
     private int threadQuantity;
 
     @Option(
-        names = {"-ap", "--affine-params"},
-        description = "Configuration of affine transformations",
-        converter = AffineParamsConverter.class,
-        defaultValue = "0.1,0.1,0.1,0.1,0.1,0.1"
-    )
+            names = {"-ap", "--affine-params"},
+            description = "Configuration of affine transformations",
+            converter = AffineParamsConverter.class,
+            defaultValue = "0.1,0.1,0.1,0.1,0.1,0.1")
     private List<AffineParams> affineParamsList;
 
     @Option(
-        names = {"-f", "--functions"},
-        description = "Transformation function and its weight",
-        converter = VariationParamsConverter.class,
-        defaultValue = "swirl:1.0"
-    )
+            names = {"-f", "--functions"},
+            description = "Transformation function and its weight",
+            converter = VariationParamsConverter.class,
+            defaultValue = "swirl:1.0")
     private List<VariationParams> variationParamsList;
 
     @Option(
-        names = "--config",
-        description = "Application configuration file (JSON)",
-        converter = AppConfigurationConverter.class
-    )
+            names = "--config",
+            description = "Application configuration file (JSON)",
+            converter = AppConfigurationConverter.class)
     private AppConfiguration appConfiguration;
 
     public static void main(String[] args) {
@@ -117,7 +111,7 @@ public class Application implements Runnable {
             log.error("Validation error: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
-            log.error("Fatal error during fractal generation: {}", e.getMessage(), e);
+            log.error("Fatal error during fractal generation: {}", e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -127,14 +121,14 @@ public class Application implements Runnable {
             log.info("No config file provided, using CLI arguments and defaults");
             Size size = new Size(width, height);
             appConfiguration = AppConfiguration.builder()
-                .size(size)
-                .seed(seed)
-                .iterationCount(iterationCount)
-                .outputPath(outputPath)
-                .threadQuantity(threadQuantity)
-                .affineParamsList(affineParamsList)
-                .variationsParamsList(variationParamsList)
-                .build();
+                    .size(size)
+                    .seed(seed)
+                    .iterationCount(iterationCount)
+                    .outputPath(outputPath)
+                    .threadQuantity(threadQuantity)
+                    .affineParamsList(affineParamsList)
+                    .variationsParamsList(variationParamsList)
+                    .build();
         } else {
             log.info("Configuration loaded from file");
         }
@@ -160,24 +154,33 @@ public class Application implements Runnable {
 
     private void logConfiguration() {
         log.info("=== Fractal Flame Configuration ===");
-        log.info("Image size: {}x{}",
-            appConfiguration.getSize().width(),
-            appConfiguration.getSize().height());
+        log.info(
+                "Image size: {}x{}",
+                appConfiguration.getSize().width(),
+                appConfiguration.getSize().height());
         log.info("Iterations: {}", appConfiguration.getIterationCount());
         log.info("Threads: {}", appConfiguration.getThreadQuantity());
         log.info("Seed: {}", appConfiguration.getSeed());
         log.info("Output path: {}", appConfiguration.getOutputPath());
-        log.info("Affine transformations: {}", appConfiguration.getAffineParamsList().size());
-        log.info("Variation functions: {}", appConfiguration.getVariationsParamsList().size());
+        log.info(
+                "Affine transformations: {}",
+                appConfiguration.getAffineParamsList().size());
+        log.info(
+                "Variation functions: {}",
+                appConfiguration.getVariationsParamsList().size());
 
         log.debug("Affine params details:");
         for (int i = 0; i < appConfiguration.getAffineParamsList().size(); i++) {
-            log.debug("  [{}]: {}", i, appConfiguration.getAffineParamsList().get(i));
+            log.debug(
+                    "Detail #{}: {}", i, appConfiguration.getAffineParamsList().get(i));
         }
 
         log.debug("Variation params details:");
-        for (VariationParams vp : appConfiguration.getVariationsParamsList()) {
-            log.debug("  {}", vp);
+        for (int i = 0; i < appConfiguration.getVariationsParamsList().size(); i++) {
+            log.debug(
+                    "Detail #{}: {}",
+                    i,
+                    appConfiguration.getVariationsParamsList().get(i));
         }
     }
 
@@ -186,8 +189,7 @@ public class Application implements Runnable {
             log.info("Starting single-threaded generation");
             game.runSingleThread();
         } else {
-            log.info("Starting multi-threaded generation with {} threads",
-                appConfiguration.getThreadQuantity());
+            log.info("Starting multi-threaded generation with {} threads", appConfiguration.getThreadQuantity());
             game.runMultiThread();
         }
     }

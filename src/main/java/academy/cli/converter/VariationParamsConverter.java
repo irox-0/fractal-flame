@@ -1,12 +1,13 @@
 package academy.cli.converter;
 
+import static academy.cli.utils.CliUtils.*;
+
 import academy.domain.Variation;
 import academy.domain.VariationParams;
-import lombok.extern.slf4j.Slf4j;
-import picocli.CommandLine;
 import java.util.List;
 import java.util.stream.Stream;
-import static academy.cli.utils.CliUtils.*;
+import lombok.extern.slf4j.Slf4j;
+import picocli.CommandLine;
 
 @Slf4j
 public class VariationParamsConverter implements CommandLine.ITypeConverter<List<VariationParams>> {
@@ -22,10 +23,10 @@ public class VariationParamsConverter implements CommandLine.ITypeConverter<List
 
         try {
             List<VariationParams> result = Stream.of(value.trim().split(","))
-                .map(String::trim)
-                .filter(transformString -> !transformString.isEmpty())
-                .map(this::parseVariationParam)
-                .toList();
+                    .map(String::trim)
+                    .filter(transformString -> !transformString.isEmpty())
+                    .map(this::parseVariationParam)
+                    .toList();
 
             log.info("Successfully parsed {} variation function(s)", result.size());
             for (VariationParams vp : result) {
@@ -37,8 +38,7 @@ public class VariationParamsConverter implements CommandLine.ITypeConverter<List
             throw e;
         } catch (Exception e) {
             log.error("Failed to parse variation params: {}", e.getMessage());
-            throw new CommandLine.TypeConversionException(
-                "Failed to parse variation params: " + e.getMessage());
+            throw new CommandLine.TypeConversionException("Failed to parse variation params: " + e.getMessage());
         }
     }
 
@@ -48,17 +48,17 @@ public class VariationParamsConverter implements CommandLine.ITypeConverter<List
         if (parts.length != 2) {
             log.error("Invalid variation format: '{}'. Expected format: 'name:weight'", value);
             throw new CommandLine.TypeConversionException(
-                "Invalid variation format: '" + value + "'. Expected format: 'name:weight'");
+                    "Invalid variation format: '" + value + "'. Expected format: 'name:weight'");
         }
 
         String variationName = parts[0].trim().toUpperCase();
         String weightStr = parts[1].trim();
 
         if (!Variation.isValidVariation(variationName)) {
-            log.error("Unknown variation: '{}'. Available variations: {}",
-                variationName, Variation.getValuesAsString());
+            log.error(
+                    "Unknown variation: '{}'. Available variations: {}", variationName, Variation.getValuesAsString());
             throw new CommandLine.TypeConversionException(
-                "Unknown variation: '" + variationName + "'. Available: " + Variation.getValuesAsString());
+                    "Unknown variation: '" + variationName + "'. Available: " + Variation.getValuesAsString());
         }
 
         double weight;
@@ -67,12 +67,12 @@ public class VariationParamsConverter implements CommandLine.ITypeConverter<List
         } catch (NumberFormatException e) {
             log.error("Invalid weight value: '{}' for variation '{}'", weightStr, variationName);
             throw new CommandLine.TypeConversionException(
-                "Invalid weight value: '" + weightStr + "'. Must be a number.");
+                    "Invalid weight value: '" + weightStr + "'. Must be a number.");
         }
 
         if (weight < 0) {
-            log.warn("Negative weight {} for variation {}. This may produce unexpected results.",
-                weight, variationName);
+            log.warn(
+                    "Negative weight {} for variation {}. This may produce unexpected results.", weight, variationName);
         }
 
         return new VariationParams(Variation.valueOf(variationName), weight);

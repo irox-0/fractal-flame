@@ -1,13 +1,13 @@
 package academy.domain;
 
+import java.util.Arrays;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
-import java.util.Arrays;
 
 @Data
 @RequiredArgsConstructor
-public class AffineParams{
+public class AffineParams {
 
     private final double a;
     private final double b;
@@ -19,24 +19,14 @@ public class AffineParams{
 
     public static AffineParams fromString(String transformString) {
         double[] params = Arrays.stream(transformString.split(","))
-            .mapToDouble(Double::parseDouble)
-            .toArray();
+                .mapToDouble(Double::parseDouble)
+                .toArray();
 
-        return new AffineParams(
-            params[0], params[1], params[2],
-            params[3], params[4], params[5]
-        );
+        return new AffineParams(params[0], params[1], params[2], params[3], params[4], params[5]);
     }
 
     @Override
     public @NotNull String toString() {
-        return "AffineParams{" +
-            "a=" + a +
-            ", b=" + b +
-            ", c=" + c +
-            ", d=" + d +
-            ", e=" + e +
-            ", f=" + f +
-            '}';
+        return "AffineParams{" + "a=" + a + ", b=" + b + ", c=" + c + ", d=" + d + ", e=" + e + ", f=" + f + '}';
     }
 }

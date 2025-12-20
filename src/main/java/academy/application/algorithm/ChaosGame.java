@@ -5,14 +5,14 @@ import academy.domain.AffineParams;
 import academy.domain.AppConfiguration;
 import academy.domain.Point;
 import academy.domain.VariationParams;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -24,8 +24,7 @@ public class ChaosGame {
 
     public void runSingleThread() {
         log.info("Starting chaos game algorithm (single-threaded)");
-        log.debug("Total iterations: {}, warmup iterations: {}",
-            configuration.getIterationCount(), WARMUP_ITERATIONS);
+        log.debug("Total iterations: {}, warmup iterations: {}", configuration.getIterationCount(), WARMUP_ITERATIONS);
 
         long startTime = System.currentTimeMillis();
         generatePoints(configuration.getRandom(), renderer, configuration.getIterationCount(), 0);
@@ -78,7 +77,7 @@ public class ChaosGame {
                     Thread.currentThread().interrupt();
                     throw new RuntimeException("Generation interrupted", e);
                 } catch (ExecutionException e) {
-                    log.error("Thread execution failed: {}", e.getCause().getMessage(), e.getCause());
+                    log.error("Thread execution failed: {}", e.getCause().getMessage());
                     throw new RuntimeException("Generation failed", e.getCause());
                 }
             }
@@ -95,17 +94,16 @@ public class ChaosGame {
 
     private void generatePoints(Random random, ImageRenderer targetRenderer, int iterations, int threadId) {
         Point point = Point.builder()
-            .x(random.nextDouble(-1.0, 1.0))
-            .y(random.nextDouble(-1.0, 1.0))
-            .color(random.nextDouble(0.0, 1.0))
-            .build();
+                .x(random.nextDouble(-1.0, 1.0))
+                .y(random.nextDouble(-1.0, 1.0))
+                .color(random.nextDouble(0.0, 1.0))
+                .build();
 
         int progressStep = Math.max(1, iterations / PROGRESS_LOG_INTERVAL_PERCENT);
         int nextProgressLog = progressStep;
         int effectiveIterations = iterations - WARMUP_ITERATIONS;
 
-        log.trace("Thread {}: Starting point generation at ({}, {})",
-            threadId, point.getX(), point.getY());
+        log.trace("Thread {}: Starting point generation at ({}, {})", threadId, point.getX(), point.getY());
 
         for (int j = 0; j < iterations; j++) {
             int k = random.nextInt(0, configuration.getAffineParamsList().size());
@@ -118,17 +116,20 @@ public class ChaosGame {
             targetRenderer.plot(point);
             if (threadId == 0 && j >= nextProgressLog) {
                 int progressPercent = (int) ((j - WARMUP_ITERATIONS) * 100.0 / effectiveIterations);
-                log.info("Generation progress: {}% ({}/{} iterations)",
-                    progressPercent, j - WARMUP_ITERATIONS, effectiveIterations);
+                log.info(
+                        "Generation progress: {}% ({}/{} iterations)",
+                        progressPercent, j - WARMUP_ITERATIONS, effectiveIterations);
                 nextProgressLog += progressStep;
             }
         }
         if (threadId == 0) {
-            log.info("Generation progress: 100% ({}/{} iterations)",
-                effectiveIterations, effectiveIterations);
+            log.info("Generation progress: 100% ({}/{} iterations)", effectiveIterations, effectiveIterations);
         }
-        log.debug("Thread {}: Completed {} iterations ({} effective points)",
-            threadId, iterations, iterations - WARMUP_ITERATIONS);
+        log.debug(
+                "Thread {}: Completed {} iterations ({} effective points)",
+                threadId,
+                iterations,
+                iterations - WARMUP_ITERATIONS);
     }
 
     private Point applyFunction(Point point, List<VariationParams> variationParamsList, AffineParams affine) {
@@ -138,20 +139,16 @@ public class ChaosGame {
         double yResult = 0.0;
         for (VariationParams variationParams : variationParamsList) {
             Point tempPoint = Point.builder()
-                .x(xAffine)
-                .y(yAffine)
-                .color(point.getColor())
-                .build();
+                    .x(xAffine)
+                    .y(yAffine)
+                    .color(point.getColor())
+                    .build();
 
             Point variedPoint = variationParams.variation().getOperator().apply(tempPoint);
             xResult += variedPoint.getX() * variationParams.weight();
             yResult += variedPoint.getY() * variationParams.weight();
         }
 
-        return Point.builder()
-            .x(xResult)
-            .y(yResult)
-            .color(point.getColor())
-            .build();
+        return Point.builder().x(xResult).y(yResult).color(point.getColor()).build();
     }
 }
