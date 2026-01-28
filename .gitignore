@@ -19,9 +19,6 @@ dependency-reduced-pom.xml
 ### Scala SBT
 .bsp
 
-### json config file
-*.json
-
 ### png images
 *.png
 

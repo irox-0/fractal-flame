@@ -16,10 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 public class ImageRenderer {
     public static final int BRIGHTNESS = 255;
     public static final double AMPLITUDE = 0.5;
-    private static final double X_MIN = -2.0;
-    private static final double X_MAX = 2.0;
-    private static final double Y_MIN = -2.0;
-    private static final double Y_MAX = 2.0;
+    private static final double X_MIN = -4.0;
+    private static final double X_MAX = 4.0;
+    private static final double Y_MIN = -4.0;
+    private static final double Y_MAX = 4.0;
 
     private final int width;
     private final int height;

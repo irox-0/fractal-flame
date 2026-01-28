@@ -176,17 +176,17 @@ public class ArgumentValidator {
 
     private static boolean isValidAffineParams(AffineParams params) {
         return Double.isNaN(params.getA())
-            || Double.isInfinite(params.getA())
-            || Double.isNaN(params.getB())
-            || Double.isInfinite(params.getB())
-            || Double.isNaN(params.getC())
-            || Double.isInfinite(params.getC())
-            || Double.isNaN(params.getD())
-            || Double.isInfinite(params.getD())
-            || Double.isNaN(params.getE())
-            || Double.isInfinite(params.getE())
-            || Double.isNaN(params.getF())
-            || Double.isInfinite(params.getF());
+                || Double.isInfinite(params.getA())
+                || Double.isNaN(params.getB())
+                || Double.isInfinite(params.getB())
+                || Double.isNaN(params.getC())
+                || Double.isInfinite(params.getC())
+                || Double.isNaN(params.getD())
+                || Double.isInfinite(params.getD())
+                || Double.isNaN(params.getE())
+                || Double.isInfinite(params.getE())
+                || Double.isNaN(params.getF())
+                || Double.isInfinite(params.getF());
     }
 
     public static void validateVariationParams(AppConfiguration config, Application app) {
