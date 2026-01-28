@@ -1,6 +1,7 @@
 package academy.cli.validator;
 
 import academy.Application;
+import academy.domain.AffineParams;
 import academy.domain.AppConfiguration;
 import academy.domain.Variation;
 import java.nio.file.Files;
@@ -160,18 +161,7 @@ public class ArgumentValidator {
                         new CommandLine(app), String.format("Affine parameter at index %d is null", i));
             }
 
-            if (Double.isNaN(params.getA())
-                    || Double.isInfinite(params.getA())
-                    || Double.isNaN(params.getB())
-                    || Double.isInfinite(params.getB())
-                    || Double.isNaN(params.getC())
-                    || Double.isInfinite(params.getC())
-                    || Double.isNaN(params.getD())
-                    || Double.isInfinite(params.getD())
-                    || Double.isNaN(params.getE())
-                    || Double.isInfinite(params.getE())
-                    || Double.isNaN(params.getF())
-                    || Double.isInfinite(params.getF())) {
+            if (isValidAffineParams(params)) {
                 log.error("Affine parameter at index {} contains NaN or Infinite values", i);
                 throw new CommandLine.ParameterException(
                         new CommandLine(app),
@@ -182,6 +172,21 @@ public class ArgumentValidator {
         }
 
         log.debug("Affine parameters validation passed");
+    }
+
+    private static boolean isValidAffineParams(AffineParams params) {
+        return Double.isNaN(params.getA())
+            || Double.isInfinite(params.getA())
+            || Double.isNaN(params.getB())
+            || Double.isInfinite(params.getB())
+            || Double.isNaN(params.getC())
+            || Double.isInfinite(params.getC())
+            || Double.isNaN(params.getD())
+            || Double.isInfinite(params.getD())
+            || Double.isNaN(params.getE())
+            || Double.isInfinite(params.getE())
+            || Double.isNaN(params.getF())
+            || Double.isInfinite(params.getF());
     }
 
     public static void validateVariationParams(AppConfiguration config, Application app) {
