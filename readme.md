@@ -100,24 +100,32 @@ java -jar fractal-flame.jar --config config.json
 ## Архитектура
 
 ```
-academy/
-├── Application.java              # Точка входа, CLI-обработка
-├── application/
-│   ├── algorithm/
-│   │   └── ChaosGame.java        # Реализация алгоритма Chaos Game
-│   └── render/
-│       └── ImageRenderer.java    # Рендеринг и сохранение изображений
-├── cli/
-│   ├── converter/                # Конвертеры CLI-параметров
-│   └── utils/
-│       └── CliUtils.java         # Утилиты валидации
-└── domain/                       # Доменные модели
-    ├── AffineParams.java
-    ├── AppConfiguration.java
-    ├── Point.java
-    ├── Size.java
-    ├── Variation.java
-    └── VariationParams.java
+src/main/
+├── java/academy/
+│   ├── Application.java                    # Точка входа, CLI-обработка
+│   ├── application/
+│   │   ├── algorithm/
+│   │   │   └── ChaosGame.java              # Реализация алгоритма Chaos Game
+│   │   └── render/
+│   │       └── ImageRenderer.java          # Рендеринг и сохранение изображений
+│   ├── cli/
+│   │   ├── converter/
+│   │   │   ├── AffineParamsConverter.java  # Парсинг аффинных параметров
+│   │   │   ├── AppConfigurationConverter.java  # Парсинг JSON-конфигурации
+│   │   │   ├── PathConverter.java          # Конвертер путей
+│   │   │   └── VariationParamsConverter.java   # Парсинг вариаций
+│   │   └── utils/
+│   │       └── CliUtils.java               # Утилиты валидации
+│   └── domain/
+│       ├── AffineParams.java               # Параметры аффинного преобразования
+│       ├── AppConfiguration.java           # Конфигурация приложения
+│       ├── Point.java                      # Точка с координатами и цветом
+│       ├── Size.java                       # Размер изображения
+│       ├── Variation.java                  # Enum вариаций с формулами
+│       └── VariationParams.java            # Вариация с весом
+└── resources/
+    ├── log4j2.xml                          # Конфигурация логирования
+    └── LogLayout.json                      # Формат логов
 ```
 
 ## Алгоритм
