@@ -63,7 +63,6 @@ public class ImageRenderer {
         log.info("Starting image rendering to {}", outputPath);
         long startTime = System.currentTimeMillis();
 
-        // Проверяем и создаем директорию при необходимости
         Path parentDir = outputPath.getParent();
         if (parentDir != null && !Files.exists(parentDir)) {
             try {

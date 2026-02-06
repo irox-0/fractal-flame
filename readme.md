@@ -1,4 +1,4 @@
-# Fractal Flame
+# Fractal Flame Generator
 
 Генератор фрактального пламени на Java с поддержкой многопоточности.
 
